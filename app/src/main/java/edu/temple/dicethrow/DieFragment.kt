@@ -23,7 +23,7 @@ class DieFragment : Fragment() {
 
     private lateinit var dieTextView: TextView
     private var dieSides: Int = 6
-    private var currentRoll: Int = 1  // Store current roll
+    private var currentRoll: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class DieFragment : Fragment() {
             dieSides = it
         }
         savedInstanceState?.getInt(CURRENT_ROLL)?.let {
-            currentRoll = it  // Restore previous roll
+            currentRoll = it
         }
     }
 
@@ -46,17 +46,16 @@ class DieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dieTextView.text = currentRoll.toString() // Restore previous roll
+        dieTextView.text = currentRoll.toString()
         view.setOnClickListener { throwDie() }
     }
 
-    private fun throwDie() {
+    fun throwDie() {
         currentRoll = Random.nextInt(1, dieSides + 1)
         dieTextView.text = currentRoll.toString()
     }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt(CURRENT_ROLL, currentRoll)  // Save roll state
+        outState.putInt(CURRENT_ROLL, currentRoll)
     }
 }
