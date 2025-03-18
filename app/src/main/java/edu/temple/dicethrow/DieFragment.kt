@@ -10,26 +10,35 @@ import kotlin.random.Random
 
 class DieFragment : Fragment() {
 
-    val DIESIDE = "sidenumber"
+    companion object {
+        private const val DIESIDE = "sidenumber"
+        private const val CURRENT_ROLL = "current_roll"
 
-    lateinit var dieTextView: TextView
+        fun newInstance(sides: Int) = DieFragment().apply {
+            arguments = Bundle().apply {
+                putInt(DIESIDE, sides)
+            }
+        }
+    }
 
-    var dieSides: Int = 6
+    private lateinit var dieTextView: TextView
+    private var dieSides: Int = 6
+    private var currentRoll: Int = 1  // Store current roll
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            it.getInt(DIESIDE).run {
-                dieSides = this
-            }
+        arguments?.getInt(DIESIDE)?.let {
+            dieSides = it
+        }
+        savedInstanceState?.getInt(CURRENT_ROLL)?.let {
+            currentRoll = it  // Restore previous roll
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
         return inflater.inflate(R.layout.fragment_die, container, false).apply {
             dieTextView = findViewById(R.id.dieTextView)
         }
@@ -37,13 +46,17 @@ class DieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        throwDie()
-        view.setOnClickListener{
-            throwDie()
-        }
+        dieTextView.text = currentRoll.toString() // Restore previous roll
+        view.setOnClickListener { throwDie() }
     }
 
-    fun throwDie() {
-        dieTextView.text = Random.nextInt(dieSides).toString()
+    private fun throwDie() {
+        currentRoll = Random.nextInt(1, dieSides + 1)
+        dieTextView.text = currentRoll.toString()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(CURRENT_ROLL, currentRoll)  // Save roll state
     }
 }
