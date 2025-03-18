@@ -3,7 +3,6 @@ package edu.temple.dicethrow
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,8 +12,15 @@ class MainActivity : AppCompatActivity() {
 
         val rollButton: Button = findViewById(R.id.rollDiceButton)
 
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, DieFragment())
+                .commit()
+        }
+
         rollButton.setOnClickListener {
-            (supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as DieFragment).throwDie()
+            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? DieFragment
+            fragment?.throwDie()
         }
     }
 }

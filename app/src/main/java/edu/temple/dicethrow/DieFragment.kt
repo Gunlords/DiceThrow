@@ -10,35 +10,26 @@ import kotlin.random.Random
 
 class DieFragment : Fragment() {
 
-    companion object {
-        private const val DIESIDE = "sidenumber"
-        private const val CURRENT_ROLL = "current_roll"
+    val DIESIDE = "sidenumber"
 
-        fun newInstance(sides: Int) = DieFragment().apply {
-            arguments = Bundle().apply {
-                putInt(DIESIDE, sides)
-            }
-        }
-    }
+    lateinit var dieTextView: TextView
 
-    private lateinit var dieTextView: TextView
-    private var dieSides: Int = 6
-    private var currentRoll: Int = 1
+    var dieSides: Int = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getInt(DIESIDE)?.let {
-            dieSides = it
-        }
-        savedInstanceState?.getInt(CURRENT_ROLL)?.let {
-            currentRoll = it
+        arguments?.let {
+            it.getInt(DIESIDE).run {
+                dieSides = this
+            }
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_die, container, false).apply {
             dieTextView = findViewById(R.id.dieTextView)
         }
@@ -46,16 +37,17 @@ class DieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dieTextView.text = currentRoll.toString()
-        view.setOnClickListener { throwDie() }
+        throwDie()
+        view.setOnClickListener{
+            throwDie()
+        }
     }
 
+
     fun throwDie() {
-        currentRoll = Random.nextInt(1, dieSides + 1)
-        dieTextView.text = currentRoll.toString()
+        val rollResult = Random.nextInt(1, dieSides + 1)
+        dieTextView.text = rollResult.toString()
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(CURRENT_ROLL, currentRoll)
-    }
+
+
 }
