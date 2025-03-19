@@ -14,13 +14,17 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, DieFragment())
+                .replace(R.id.fragmentContainerView1, DieFragment.newInstance(6)) // First Die
+                .replace(R.id.fragmentContainerView2, DieFragment.newInstance(6)) // Second Die
                 .commit()
         }
 
         rollButton.setOnClickListener {
-            val fragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as? DieFragment
-            fragment?.throwDie()
+            val fragment1 = supportFragmentManager.findFragmentById(R.id.fragmentContainerView1) as? DieFragment
+            val fragment2 = supportFragmentManager.findFragmentById(R.id.fragmentContainerView2) as? DieFragment
+
+            fragment1?.throwDie()
+            fragment2?.throwDie()
         }
     }
 }

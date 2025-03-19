@@ -14,16 +14,16 @@ class DieFragment : Fragment() {
         private const val DIESIDE = "side"
         private const val PREVIOUS_ROLL = "previous_roll"
 
-        fun newInstance(side: Int) = DieFragment().apply {
+        fun newInstance(sides: Int) = DieFragment().apply {
             arguments = Bundle().apply {
-                putInt(DIESIDE, side)
+                putInt(DIESIDE, sides)
             }
         }
     }
 
     private lateinit var dieTextView: TextView
     private var dieSides: Int = 6
-    private var currentRoll: Int = 1  // Store last roll value
+    private var currentRoll: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class DieFragment : Fragment() {
             dieSides = it
         }
         savedInstanceState?.getInt(PREVIOUS_ROLL)?.let {
-            currentRoll = it  // Restore previous roll
+            currentRoll = it
         }
     }
 
@@ -46,7 +46,7 @@ class DieFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dieTextView.text = currentRoll.toString()  // Restore last roll
+        dieTextView.text = currentRoll.toString()
         view.setOnClickListener { throwDie() }
     }
 
