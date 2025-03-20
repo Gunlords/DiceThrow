@@ -5,18 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlin.random.Random
 
-private var dieSides: Int =6
-
 class DieViewModel : ViewModel() {
 
-    private val _currentRoll: MutableLiveData<Int> by lazy {
-        MutableLiveData()
-    }
-
+    private val _currentRoll = MutableLiveData<Int>(1)
     val currentRoll: LiveData<Int> get() = _currentRoll
 
-    fun rollDie(sides: Int) {
-        _currentRoll.value = Random.nextInt(1, sides + 1)
+    private val _dieSides = MutableLiveData<Int>(6)
+    val dieSides: LiveData<Int> get() = _dieSides
+
+    fun setDieSides(sides: Int) {
+        _dieSides.value = sides
+    }
+
+    fun rollDie() {
+        _currentRoll.value = Random.nextInt(1, (_dieSides.value ?: 6) + 1)
     }
 
     fun setCurrentRoll(roll: Int) {

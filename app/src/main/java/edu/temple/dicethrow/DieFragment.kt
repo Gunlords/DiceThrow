@@ -11,12 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 class DieFragment : Fragment() {
 
     val DIESIDE = "sidenumber"
-    val PREVIOUS_ROLL = "previousroll"
 
-    lateinit var dieTextView: TextView
-
-    var dieSides: Int = 6
-
+    private lateinit var dieTextView: TextView
     private lateinit var dieViewModel: DieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +20,8 @@ class DieFragment : Fragment() {
 
         dieViewModel = ViewModelProvider(requireActivity())[DieViewModel::class.java]
 
-        // Get die sides from arguments
         arguments?.let {
-            dieSides = it.getInt(DIESIDE, 6) // Default to 6 sides
+            dieViewModel.setDieSides(it.getInt(DIESIDE, 6)) // Default to 6 sides
         }
     }
 
@@ -35,6 +30,7 @@ class DieFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_die, container, false)
         dieTextView = view.findViewById(R.id.dieTextView)
+
         return view
     }
 
@@ -42,7 +38,7 @@ class DieFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (dieViewModel.currentRoll.value == null) {
-            dieViewModel.setCurrentRoll(1) // Default roll value
+            dieViewModel.setCurrentRoll(1)
         }
 
         dieViewModel.currentRoll.observe(viewLifecycleOwner) { roll ->
