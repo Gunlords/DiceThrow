@@ -6,57 +6,57 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import kotlin.random.Random
+import androidx.lifecycle.ViewModelProvider
 
 class DieFragment : Fragment() {
 
-    companion object {
-        private const val DIESIDE = "side"
-        private const val PREVIOUS_ROLL = "previous_roll"
+    val DIESIDE = "sidenumber"
+    val PREVIOUS_ROLL = "previousroll"
 
-        fun newInstance(side: Int) = DieFragment().apply {
-            arguments = Bundle().apply {
-                putInt(DIESIDE, side)
-            }
-        }
-    }
+    lateinit var dieTextView: TextView
 
-    private lateinit var dieTextView: TextView
-    private var dieSides: Int = 6
-    private var currentRoll: Int = 1  // Store last roll value
+    var dieSides: Int = 6
+
+    private lateinit var dieViewModel: DieViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getInt(DIESIDE)?.let {
-            dieSides = it
-        }
-        savedInstanceState?.getInt(PREVIOUS_ROLL)?.let {
-            currentRoll = it  // Restore previous roll
+
+        dieViewModel = ViewModelProvider(requireActivity())[DieViewModel::class.java]
+
+        // Get die sides from arguments
+        arguments?.let {
+            dieSides = it.getInt(DIESIDE, 6) // Default to 6 sides
         }
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_die, container, false).apply {
-            dieTextView = findViewById(R.id.dieTextView)
-        }
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_die, container, false)
+        dieTextView = view.findViewById(R.id.dieTextView)
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dieTextView.text = currentRoll.toString()  // Restore last roll
-        view.setOnClickListener { throwDie() }
+
+        if (dieViewModel.currentRoll.value == null) {
+            dieViewModel.setCurrentRoll(1) // Default roll value
+        }
+
+        dieViewModel.currentRoll.observe(viewLifecycleOwner) { roll ->
+            dieTextView.text = roll.toString()
+        }
     }
 
-    fun throwDie() {
-        currentRoll = Random.nextInt(1, dieSides + 1)
-        dieTextView.text = currentRoll.toString()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(PREVIOUS_ROLL, currentRoll)
+    companion object {
+        fun newInstance(sides: Int): DieFragment {
+            return DieFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("sidenumber", sides)
+                }
+            }
+        }
     }
 }
